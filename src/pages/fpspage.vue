@@ -137,9 +137,6 @@ export default {
         this.hide[x] = false;
         this.life[x] = true;
       }
-      if (this.score > this.bestScore) {
-        this.bestScore = this.score;
-      }
     },
     async reload() {
       if (this.ammo < this.mag && this.ammo > 0) {
@@ -165,10 +162,14 @@ export default {
       this.life.forEach(async (x) => {
         if ((x == true, this.health > 0)) {
           while (this.health > 0) {
+            if (this.score > this.bestScore) {
+              this.bestScore = this.score;
+            }
             await this.sleep(7);
             this.health = this.health - 1;
           }
-          if (this.health == 0) { await this.sleep(3)
+          if (this.health == 0) {
+            await this.sleep(3);
             this.life.fill(false, 0, 4);
             this.death.fill(true, 0, 4);
             this.hide.fill(false, 0, 4);
