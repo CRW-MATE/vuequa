@@ -110,7 +110,7 @@ export default {
       death: [false, false, false, false],
       hide: [false, false, false, false],
       life: [true, true, true, true],
-      health: 3,
+      health: 4,
       showHlthNum: false,
       hit: false,
       score: 0,
@@ -133,6 +133,9 @@ export default {
         await this.sleep(0.5);
         this.death[x] = false;
         this.hide[x] = true;
+        await this.sleep(6 * Math.random());
+        this.hide[x] = false;
+        this.life[x] = true;
       }
       if (this.score > this.bestScore) {
         this.bestScore = this.score;
@@ -153,24 +156,25 @@ export default {
       }
     },
     async start() {
-      await this.sleep(6 * Math.random());
-      this.hide[x] = false;
-      this.life[x] = true;
-      await this.sleep(3);
-      for (let i = 0; this.life[x] == true && this.health > i; ) {
-        await this.sleep(7);
-        if (this.health > i) {
-          this.health = this.health - 1;
-          this.hit = true;
-          await this.sleep(0.7);
-          this.hit = false;
-        } else {
-          this.life.forEach((_a) => (_a = false));
-          this.score = 0;
-          await this.sleep(2);
-          this.life.forEach((_a) => (_a = true));
+      this.health = 4;
+      this.score = 0;
+      this.ammo = this.mag;
+      this.life.fill(true, 0, 4);
+      this.death.fill(false, 0, 4);
+      this.hide.fill(false, 0, 4);
+      this.life.forEach(async (x) => {
+        if ((x == true, this.health > 0)) {
+          while (this.health > 0) {
+            await this.sleep(7);
+            this.health = this.health - 1;
+          }
+          if (this.health == 0) { await this.sleep(3)
+            this.life.fill(false, 0, 4);
+            this.death.fill(true, 0, 4);
+            this.hide.fill(false, 0, 4);
+          }
         }
-      }
+      });
     },
   },
 };
@@ -195,7 +199,7 @@ export default {
   cursor: wait;
 }
 .enemy {
-  background-color: gray;
+  background-color: rgb(74, 60, 60);
   width: 10vh;
   height: 50vh;
   position: absolute;
