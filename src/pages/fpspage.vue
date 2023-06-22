@@ -29,7 +29,6 @@
         v-bind:class="{
           hide: this.hide[0] == true,
           enemy: this.life[0] == true,
-          deadc: this.death[0] == true,
         }"
       ></div>
       <div
@@ -38,7 +37,6 @@
         v-bind:class="{
           hide: this.hide[1] == true,
           enemy: this.life[1] == true,
-          deadc: this.death[1] == true,
         }"
       ></div>
       <div
@@ -47,7 +45,6 @@
         v-bind:class="{
           hide: this.hide[2] == true,
           enemy: this.life[2] == true,
-          deadc: this.death[2] == true,
         }"
       ></div>
       <div
@@ -56,7 +53,6 @@
         v-bind:class="{
           hide: this.hide[3] == true,
           enemy: this.life[3] == true,
-          deadc: this.death[3] == true,
         }"
       ></div>
 
@@ -90,6 +86,7 @@
     ></q-btn>
     <div>
       <q-card class="q-pa-xl q-ma-lg">
+        <h2 style="text-align: center">Game-settings</h2>
         <h6>showHlthNum</h6>
         <q-toggle v-model="this.showHlthNum"></q-toggle>
         <h6>Health</h6>
@@ -107,9 +104,8 @@ export default {
   components: { hBtn },
   data() {
     return {
-      death: [false, false, false, false],
-      hide: [false, false, false, false],
-      life: [true, true, true, true],
+      life: [false, false, false, false],
+      hide: [true, true, true, true],
       health: 4,
       showHlthNum: false,
       hit: false,
@@ -118,6 +114,7 @@ export default {
       ammo: 6,
       reloading: false,
       mag: 6,
+      r: 6 * Math.random(),
     };
   },
   methods: {
@@ -129,13 +126,16 @@ export default {
         this.ammo = this.ammo - 1;
         this.score = this.score + 1;
         this.life[x] = false;
-        this.death[x] = true;
-        await this.sleep(0.5);
-        this.death[x] = false;
         this.hide[x] = true;
-        await this.sleep(6 * Math.random());
+        await this.sleep(this.r);
         this.hide[x] = false;
         this.life[x] = true;
+        if (this.ammo == 0) {
+          this.reloading = true;
+          await this.sleep(3);
+          this.ammo = this.mag;
+          this.reloading = false;
+        }
       }
     },
     async reload() {
@@ -145,37 +145,28 @@ export default {
         this.ammo = this.mag;
         this.reloading = false;
       }
-      if (this.ammo == 0) {
-        this.reloading = true;
-        await this.sleep(3);
-        this.ammo = this.mag;
-        this.reloading = false;
-      }
     },
     async start() {
+      this.life.fill(true, 0, 4);
+      this.hide.fill(false, 0, 4);
       this.health = 4;
       this.score = 0;
       this.ammo = this.mag;
-      this.life.fill(true, 0, 4);
-      this.death.fill(false, 0, 4);
-      this.hide.fill(false, 0, 4);
-      this.life.forEach(async (x) => {
-        if ((x == true, this.health > 0)) {
-          while (this.health > 0) {
-            if (this.score > this.bestScore) {
+      await this.sleep(4);
+      while (this.health > 0) {
+        await this.sleep(10);
+        this.life.forEach(async (x, i) => {
+          if (x == true && this.health > 0) {
+            this.health = this.health - 1;
+            console.log(i);
+          }
+        });
+      }
+      if (this.score > this.bestScore) {
               this.bestScore = this.score;
             }
-            await this.sleep(7);
-            this.health = this.health - 1;
-          }
-          if (this.health == 0) {
-            await this.sleep(3);
-            this.life.fill(false, 0, 4);
-            this.death.fill(true, 0, 4);
-            this.hide.fill(false, 0, 4);
-          }
-        }
-      });
+      this.life.fill(false, 0, 4);
+      this.hide.fill(true, 0, 4);
     },
   },
 };
@@ -208,22 +199,13 @@ export default {
   transition: ease-in 0.5s;
 }
 .hide {
-  background-color: gray;
+  background-color: darkred;
   width: 10vh;
   height: 50vh;
   position: absolute;
   bottom: -50vh;
   transition: ease-in 0.5s;
 }
-.deadc {
-  background-color: darkred;
-  width: 10vh;
-  height: 20vh;
-  position: absolute;
-  bottom: 0px;
-  transition: ease-in 0.5s;
-}
-
 .th {
   background-color: rgb(204, 53, 53);
   text-align: center;
