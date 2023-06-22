@@ -11,9 +11,9 @@
     </div>
     <q-btn
       clickable
-      label="reset health"
+      label="start game"
       class="q-mx-lg"
-      @click="this.health = 3"
+      @click="this.start()"
     ></q-btn>
 
     <div
@@ -125,7 +125,7 @@ export default {
       return new Promise((resolve) => setTimeout(resolve, a * 1000));
     },
     async cycle(x) {
-      if (this.ammo > 0) {
+      if (this.ammo > 0 && this.reloading == false) {
         this.ammo = this.ammo - 1;
         this.score = this.score + 1;
         this.life[x] = false;
@@ -137,7 +137,22 @@ export default {
       if (this.score > this.bestScore) {
         this.bestScore = this.score;
       }
-
+    },
+    async reload() {
+      if (this.ammo < this.mag && this.ammo > 0) {
+        this.reloading = true;
+        await this.sleep(2);
+        this.ammo = this.mag;
+        this.reloading = false;
+      }
+      if (this.ammo == 0) {
+        this.reloading = true;
+        await this.sleep(3);
+        this.ammo = this.mag;
+        this.reloading = false;
+      }
+    },
+    async start() {
       await this.sleep(6 * Math.random());
       this.hide[x] = false;
       this.life[x] = true;
@@ -155,20 +170,6 @@ export default {
           await this.sleep(2);
           this.life.forEach((_a) => (_a = true));
         }
-      }
-    },
-    async reload() {
-      if (this.ammo < this.mag && this.ammo > 0) {
-        this.reloading = true;
-        await this.sleep(2);
-        this.ammo = this.mag;
-        this.reloading = false;
-      }
-      if (this.ammo == 0) {
-        this.reloading = true;
-        await this.sleep(3);
-        this.ammo = this.mag;
-        this.reloading = false;
       }
     },
   },
