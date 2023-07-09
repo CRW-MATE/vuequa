@@ -61,6 +61,14 @@
           icon="check"
           class="q-ma-sm"
           style="height: 50px; width: 50px"
+        />
+        <q-btn
+          clickable
+          @click="$router.push('/kitchen')"
+          color="primary"
+          icon="restaurant"
+          class="q-ma-sm"
+          style="height: 50px; width: 50px"
         >
         </q-btn>
       </div>
